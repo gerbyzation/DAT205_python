@@ -5,9 +5,9 @@ import mosquitto
 import random
 
 # connecting to broker
-client = mosquitto.Mosquitto("DAT205")
-client.connect("127.0.0.1")
-client.subscribe("simon/test")
+client = mosquitto.Mosquitto("Gerrit")
+client.connect("141.163.83.22")
+client.subscribe("lights")
 
 # connnecting to arduino serial port
 port = serial.Serial("/dev/tty.usbmodem1411", 9600, timeout=2)
@@ -17,7 +17,10 @@ input = port.readline()
 def messageReceived(broker, obj, msg):
     global client
     print("Message " + msg.topic + " containing: " + msg.payload)
-    port.write(str(msg.payload))
+    if msg.payload == "ON":
+        port.write(str(1))
+    elif msg.payload == "OFF":
+        port.write(str(0))
 
 client.on_message = messageReceived
 
